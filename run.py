@@ -13,7 +13,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from src.config import DB_PATH, SALIDA_DIR, load_campana
 from src.graph import GRAPH
-from src.runtime import set_store
+from src.runtime import set_salida_dir, set_store
 from src.store import Store
 
 load_dotenv()
@@ -29,6 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         event = json.loads(path.read_text(encoding="utf-8"))
         SALIDA_DIR.mkdir(parents=True, exist_ok=True)
+        set_salida_dir(SALIDA_DIR)
         store = Store(DB_PATH)
         set_store(store)
         GRAPH.invoke(

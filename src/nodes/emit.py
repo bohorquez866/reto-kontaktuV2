@@ -4,9 +4,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from src.config import SALIDA_DIR
 from src.labels import CUT_LABELS
-from src.runtime import get_store
+from src.runtime import get_salida_dir, get_store
 from src.state import OrchestratorState
 
 
@@ -32,7 +31,7 @@ def emit_and_persist(state: OrchestratorState) -> dict:
         if order["operacion"] == "cancelar_recordatorio":
             store.cancel_reminder(order["cuerpo"]["reminder_id"])
         line = {k: v for k, v in order.items() if k != "reminder_id"}
-        _append_jsonl(SALIDA_DIR / "ordenes.jsonl", line)
+        _append_jsonl(get_salida_dir() / "ordenes.jsonl", line)
         emitted.append(order["orden_id"])
 
     if not state.get("is_redelivery"):
@@ -59,5 +58,5 @@ def emit_and_persist(state: OrchestratorState) -> dict:
         "confianza": state["confianza"],
         "ordenes": emitted,
     }
-    _append_jsonl(SALIDA_DIR / "decisiones.jsonl", decision)
+    _append_jsonl(get_salida_dir() / "decisiones.jsonl", decision)
     return {"emitted_order_ids": emitted}

@@ -14,6 +14,12 @@ python run.py eventos/01-call-ended-nuria.json
 
 Cada invocación es un proceso nuevo. El estado (intentos, recordatorios, reentregas, DNC) vive en `salida/orquestador.db`. Las decisiones y órdenes se anexan a `salida/decisiones.jsonl` y `salida/ordenes.jsonl`.
 
+Tests (pytest, isolated temp dir, no OpenAI):
+
+```bash
+pytest
+```
+
 Lote de ejemplo:
 
 ```bash
@@ -36,4 +42,4 @@ El visor estático: abre `visor/index.html` y carga la carpeta `salida/`.
 
 ## Cómo lo comprobé
 
-`scripts/verify_lote.py` recorre las 16 decisiones del lote, las operaciones, las fechas de reintento (Nuria, Tomás, Rosa, Javier, Sonia, Carla), el vencimiento de la visita de Laura, los dos recordatorios de Marcos y que evt_14 los cancela, y que la reentrega y la otra organización no emiten órdenes. evt_02 se compara con `ejemplo-resuelto/`. Los casos sin evento de ejemplo (603, callback fuera de ventana, `descartado`, `5xx`, segunda cortada) están en las reglas, no solo en el lote.
+`pytest` cubre ventana y callbacks, señalización SIP/AMD, reglas de conversación, el mapa etiqueta→órdenes (incluidos 603, callback fuera de ventana, 2ª cortada y DNC) y el grafo completo contra los 16 eventos del lote, sin tocar `salida/`. `scripts/verify_lote.py` es la comprobación sobre una corrida real de `run.py`. evt_02 se compara con `ejemplo-resuelto/`.
